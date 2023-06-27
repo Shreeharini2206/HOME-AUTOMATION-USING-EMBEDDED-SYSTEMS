@@ -1,0 +1,71 @@
+#include,LiquidCrystal.h>
+#include "DHT.h"
+LiquidCrystal lcd(13,12,11,10,9,8);
+#define DHTPIN 7
+#define DHTTYPE DHT11
+DHT dht(DHTPIN,DHTTYPE);
+float humidityData;
+float temperatureData;
+int led=5;
+int ldr=A0;
+int value;
+void setup() {
+  pinMode(7,INPUT);//dht sensor
+  pinMode(4,OUTPUT);//relay to on fan
+  pinMode(ldr,INPUT);//ldr sensor
+  pinMode(led,OUTPUT);//led to on if dark
+  pinMode(A1,INPUT);//gas sensor
+  pinMode(6,OUTPUT);//buffer
+  Serial.Begin(9600);
+  lcd.begin(16,2);
+  dht.begin();
+}
+
+void loop() {
+  value=analogRead(ldr);
+  temperatureData=dht.readTemperature();
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("T:");
+  lcd.print(temperatureData);
+  lcd.print((char)223);
+  lcd.print("C");
+
+  if(temperatureData>32 )
+  {
+    lcd.setCursor(0,1);
+    lcd.print("Fan ON");
+    digitalWrite(4,HIGH);//relay to on dc fan
+   
+  }
+  else
+  {
+    lcd.setCursor(0,1);
+    lcd.print("Fan OFF");
+    digitalWrite(4,LOW);//relay to off dc fan
+  }
+  
+
+if( value<500)
+  {
+    lcd.setCursor(7,1);
+    lcd.print("Light ON");
+    digitalWrite(led,HIGH);//ldr light
+  }
+  else
+  {
+    lcd.setCursor(7,1);
+    lcd.print("Light OFF");
+    digitalWrite(led,LOW);//ldr light
+  }
+  if(Sensor>400)
+  {
+    digitalWrite(6,HIGH);//BUFFER
+  }
+  else
+  {
+    digitalWrite(6,LOW);//BUFFER
+  
+  }
+  delay(1000);
+}
